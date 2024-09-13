@@ -12,6 +12,12 @@ dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
 table_name = 'Events'  # Ensure this matches your table name exactly
 table = dynamodb.Table(table_name)
 
+try:
+    response = table.describe_table()
+    print("Table description:", response)
+except Exception as e:
+    print("Error:", e)
+
 
 class ApiHandler(AbstractLambda):
 
