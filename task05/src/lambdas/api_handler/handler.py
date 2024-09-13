@@ -9,15 +9,13 @@ _LOG = get_logger('ApiHandler-handler')
 
 # DynamoDB setup
 dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-table = dynamodb.Table('Events')
+table_name = 'Events'  # Ensure this matches your table name exactly
+table = dynamodb.Table(table_name)
 
 
 class ApiHandler(AbstractLambda):
 
     def validate_request(self, event) -> dict:
-        """
-        Validate the incoming event. This can be enhanced for proper validation.
-        """
         if 'principalId' not in event or 'content' not in event:
             raise ValueError("Invalid request format. 'principalId' and 'content' are required.")
 
@@ -27,28 +25,22 @@ class ApiHandler(AbstractLambda):
         if not isinstance(event['content'], dict):
             raise ValueError("Invalid 'content'. It should be a dictionary.")
 
-        return event  # Return the validated event
+        return event
 
     def handle_request(self, event, context):
-        """
-        Handle incoming event, store it in DynamoDB, and return the created event.
-        """
         try:
-            # Validate the incoming request
             valid_event = self.validate_request(event)
 
-            # Prepare the item to put in DynamoDB
             item = {
-                'log_id': str(context.aws_request_id),  # Unique ID based on the Lambda context
+                'log_id': str(context.aws_request_id),
                 'principalId': valid_event['principalId'],
                 'content': valid_event['content']
             }
 
-            # Insert the item into the DynamoDB table
             try:
                 table.put_item(Item=item)
             except Exception as e:
-                _LOG.error(f"Failed to store item in DynamoDB: {item}")
+                _LOG.error(f"Failed to store item in DynamoDB table {table_name}: {item}")
                 _LOG.error(f"DynamoDB error: {str(e)}")
                 return {
                     'statusCode': 500,
@@ -57,10 +49,8 @@ class ApiHandler(AbstractLambda):
                     'traceback': traceback.format_exc()
                 }
 
-            # Log the successful operation
-            _LOG.info(f"Successfully stored item in DynamoDB: {item}")
+            _LOG.info(f"Successfully stored item in DynamoDB table {table_name}: {item}")
 
-            # Return a success response with the created event
             response = {
                 'statusCode': 201,
                 'event': item
@@ -68,9 +58,7 @@ class ApiHandler(AbstractLambda):
             return response
 
         except ValueError as e:
-            # Log the validation error
             _LOG.error(f"Validation error: {str(e)}")
-            # Return 400 response for validation errors
             return {
                 'statusCode': 400,
                 'error': {
@@ -80,9 +68,7 @@ class ApiHandler(AbstractLambda):
             }
 
         except Exception as e:
-            # Log the internal server error
             _LOG.error(f"Internal server error: {str(e)}")
-            # Return 500 response for any other errors
             return {
                 'statusCode': 500,
                 'error': {
