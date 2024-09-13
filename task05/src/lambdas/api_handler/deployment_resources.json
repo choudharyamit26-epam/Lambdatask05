@@ -1,10 +1,20 @@
 {
   "api_handler-role": {
-    "predefined_policies": ["AmazonDynamoDBFullAccess"],
+    "predefined_policies": [
+      "AmazonDynamoDBFullAccess"
+    ],
     "principal_service": "lambda",
     "custom_policies": [
       "lambda-basic-execution"
     ],
-    "resource_type": "iam_role"
+    "resource_type": "iam_role",
+    "Action": [
+      "dynamodb:GetItem",
+      "dynamodb:Query",
+      "dynamodb:PutItem",
+      "dynamodb:Batch*",
+      "dynamodb:DeleteItem"
+    ],
+    "Resource": "*"
   }
 }
