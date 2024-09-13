@@ -32,7 +32,6 @@ class ApiHandler(AbstractLambda):
             valid_event = self.validate_request(event)
 
             item = {
-                'log_id': str(context.aws_request_id),
                 'principalId': valid_event['principalId'],
                 'content': valid_event['content']
             }
