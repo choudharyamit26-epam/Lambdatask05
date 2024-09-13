@@ -1,3 +1,5 @@
+import traceback
+
 import boto3
 
 from commons.abstract_lambda import AbstractLambda
@@ -43,7 +45,17 @@ class ApiHandler(AbstractLambda):
             }
 
             # Insert the item into the DynamoDB table
-            table.put_item(Item=item)
+            try:
+                table.put_item(Item=item)
+            except Exception as e:
+                _LOG.error(f"Failed to store item in DynamoDB: {item}")
+                _LOG.error(f"DynamoDB error: {str(e)}")
+                return {
+                    'statusCode': 500,
+                    'errorMessage': "Internal server error while storing data.",
+                    'details': str(e),
+                    'traceback': traceback.format_exc()
+                }
 
             # Log the successful operation
             _LOG.info(f"Successfully stored item in DynamoDB: {item}")
@@ -61,7 +73,10 @@ class ApiHandler(AbstractLambda):
             # Return 400 response for validation errors
             return {
                 'statusCode': 400,
-                'errorMessage': str(e)
+                'error': {
+                    'message': str(e),
+                    'details': traceback.format_exc()
+                }
             }
 
         except Exception as e:
@@ -70,8 +85,11 @@ class ApiHandler(AbstractLambda):
             # Return 500 response for any other errors
             return {
                 'statusCode': 500,
-                'errorMessage': "Internal server error",
-                'details': str(e)
+                'error': {
+                    'message': "Internal server error",
+                    'details': str(e),
+                    'traceback': traceback.format_exc()
+                }
             }
 
 
