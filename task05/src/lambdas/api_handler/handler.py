@@ -9,14 +9,9 @@ _LOG = get_logger('ApiHandler-handler')
 
 # DynamoDB setup
 dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-table_name = 'Events'  # Ensure this matches your table name exactly
-table = dynamodb.Table(table_name)
-
-try:
-    response = table.describe_table()
-    print("Table description:", response)
-except Exception as e:
-    print("Error:", e)
+# table_name = 'Events'  # Ensure this matches your table name exactly
+# table = dynamodb.Table(table_name)
+# print("-----------", table)
 
 
 class ApiHandler(AbstractLambda):
@@ -34,6 +29,9 @@ class ApiHandler(AbstractLambda):
         return event
 
     def handle_request(self, event, context):
+        table = dynamodb.Table('Events')
+        print("-----------", table)
+
         try:
             valid_event = self.validate_request(event)
 
@@ -45,7 +43,7 @@ class ApiHandler(AbstractLambda):
             try:
                 table.put_item(Item=item)
             except Exception as e:
-                _LOG.error(f"Failed to store item in DynamoDB table {table_name}: {item}")
+                _LOG.error(f"Failed to store item in DynamoDB table {table}: {item}")
                 _LOG.error(f"DynamoDB error: {str(e)}")
                 return {
                     'statusCode': 500,
@@ -54,7 +52,7 @@ class ApiHandler(AbstractLambda):
                     'traceback': traceback.format_exc()
                 }
 
-            _LOG.info(f"Successfully stored item in DynamoDB table {table_name}: {item}")
+            _LOG.info(f"Successfully stored item in DynamoDB table {table}: {item}")
 
             response = {
                 'statusCode': 201,
