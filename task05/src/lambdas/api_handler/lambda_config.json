@@ -9,14 +9,14 @@
   "timeout": 100,
   "lambda_path": "lambdas\\api_handler",
   "dependencies": [
-     {
-      "resource_type": "dynamodb_table",
-      "resource_name": "Events"
+    {
+      "target_table": "Events",
+      "resource_type": "dynamodb_table"
     }
   ],
   "event_sources": [
     {
-      "target_table":"Events",
+      "target_table": "Events",
       "resource_type": "dynamodb_table"
     }
   ],
