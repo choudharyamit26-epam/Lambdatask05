@@ -47,7 +47,7 @@ class ApiHandler(AbstractLambda):
 
             try:
                 table_data = table.put_item(Item=item)
-                print("---------- INSERTED ITEM IN TABLE", table_data)
+                print("---------- INSERTED ITEM IN TABLE", table_data, event, item)
             except Exception as e:
                 _LOG.error(f"Failed to store item in DynamoDB table {table}: {item}")
                 _LOG.error(f"DynamoDB error: {str(e)}")
@@ -62,7 +62,7 @@ class ApiHandler(AbstractLambda):
 
             response = {
                 'statusCode': 201,
-                'event': event
+                'event': item
             }
             return response
 
