@@ -36,7 +36,7 @@ class ApiHandler(AbstractLambda):
             valid_event = self.validate_request(event)
 
             item = {
-                'id': str(valid_event['principalId']),
+                'id': valid_event['principalId'],
                 'principalId': valid_event['principalId'],
                 'content': valid_event['content']
             }
