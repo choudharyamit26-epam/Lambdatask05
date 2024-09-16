@@ -29,7 +29,7 @@ class ApiHandler(AbstractLambda):
         return event
 
     def handle_request(self, event, context):
-        table = dynamodb.Table('Events')
+        table = dynamodb.Table('cmtr-9c26d125-Events')
         print("-----------", table)
 
         try:
