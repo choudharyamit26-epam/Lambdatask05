@@ -39,7 +39,7 @@ class ApiHandler(AbstractLambda):
         try:
             valid_event = self.validate_request(event)
             item = {
-                'id': uuid.uuid4(),
+                'id': str(uuid.uuid4()),
                 'principalId': valid_event['principalId'],
                 'content': valid_event['content'],
                 'createdAt': datetime.utcnow().isoformat() + 'Z'
