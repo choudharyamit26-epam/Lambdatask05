@@ -20,7 +20,9 @@
       "resource_type": "dynamodb_table"
     }
   ],
-  "env_variables": {},
+  "env_variables": {
+		"target_table_name": "${target_table}"
+	  },
   "publish_version": true,
   "alias": "${lambdas_alias_name}",
   "url_config": {},
