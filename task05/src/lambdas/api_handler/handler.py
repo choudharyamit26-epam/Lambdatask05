@@ -14,11 +14,6 @@ _LOG = get_logger('ApiHandler-handler')
 dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
 
 
-# table_name = 'Events'  # Ensure this matches your table name exactly
-# table = dynamodb.Table(table_name)
-# print("-----------", table)
-
-
 class ApiHandler(AbstractLambda):
 
     def validate_request(self, event) -> dict:
@@ -35,8 +30,6 @@ class ApiHandler(AbstractLambda):
 
     def handle_request(self, event, context):
         table = dynamodb.Table(os.environ.get("target_table_name"))
-        print("-----------", table)
-
         try:
             valid_event = self.validate_request(event)
             item = {
@@ -48,7 +41,6 @@ class ApiHandler(AbstractLambda):
 
             try:
                 table_data = table.put_item(Item=item)
-                print("---------- INSERTED ITEM IN TABLE", table_data, event, item)
             except Exception as e:
                 _LOG.error(f"Failed to store item in DynamoDB table {table}: {item}")
                 _LOG.error(f"DynamoDB error: {str(e)}")
