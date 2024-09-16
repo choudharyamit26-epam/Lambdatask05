@@ -1,4 +1,6 @@
 import traceback
+import uuid
+from datetime import datetime
 
 import boto3
 
@@ -9,6 +11,8 @@ _LOG = get_logger('ApiHandler-handler')
 
 # DynamoDB setup
 dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+
+
 # table_name = 'Events'  # Ensure this matches your table name exactly
 # table = dynamodb.Table(table_name)
 # print("-----------", table)
@@ -34,11 +38,11 @@ class ApiHandler(AbstractLambda):
 
         try:
             valid_event = self.validate_request(event)
-
             item = {
-                'id': valid_event['principalId'],
+                'id': uuid.uuid4(),
                 'principalId': valid_event['principalId'],
-                'content': valid_event['content']
+                'content': valid_event['content'],
+                'createdAt': datetime.utcnow().isoformat() + 'Z'
             }
 
             try:
