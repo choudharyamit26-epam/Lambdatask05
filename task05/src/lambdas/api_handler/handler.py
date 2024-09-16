@@ -41,7 +41,7 @@ class ApiHandler(AbstractLambda):
             item = {
                 'id': str(uuid.uuid4()),
                 'principalId': valid_event['principalId'],
-                'content': valid_event['content'],
+                'body': valid_event['content'],
                 'createdAt': datetime.utcnow().isoformat() + 'Z'
             }
 
@@ -62,7 +62,7 @@ class ApiHandler(AbstractLambda):
 
             response = {
                 'statusCode': 201,
-                'event': valid_event['content']
+                'event': event
             }
             return response
 
