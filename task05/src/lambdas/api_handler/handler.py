@@ -1,3 +1,4 @@
+import os
 import traceback
 import uuid
 from datetime import datetime
@@ -10,7 +11,7 @@ from commons.log_helper import get_logger
 _LOG = get_logger('ApiHandler-handler')
 
 # DynamoDB setup
-dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+dynamodb = boto3.resource('dynamodb', region_name=os.environ.get('region', 'eu-central-1'))
 
 
 # table_name = 'Events'  # Ensure this matches your table name exactly
@@ -33,7 +34,7 @@ class ApiHandler(AbstractLambda):
         return event
 
     def handle_request(self, event, context):
-        table = dynamodb.Table('cmtr-9c26d125-Events')
+        table = os.environ.get('target_table')
         print("-----------", table)
 
         try:
