@@ -34,7 +34,7 @@ class ApiHandler(AbstractLambda):
         return event
 
     def handle_request(self, event, context):
-        table = os.environ.get("target_table_name")
+        table = table = dynamodb.Table(os.environ.get("target_table_name"))
         print("-----------", table)
 
         try:
