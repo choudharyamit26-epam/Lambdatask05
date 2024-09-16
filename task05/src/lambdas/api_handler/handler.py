@@ -1,3 +1,4 @@
+import os
 import traceback
 import uuid
 from datetime import datetime
@@ -33,7 +34,7 @@ class ApiHandler(AbstractLambda):
         return event
 
     def handle_request(self, event, context):
-        table = dynamodb.Table('cmtr-9c26d125-Events')
+        table = os.environ.get("table_name")
         print("-----------", table)
 
         try:
@@ -65,16 +66,6 @@ class ApiHandler(AbstractLambda):
                 'event': item
             }
             return response
-
-        except ValueError as e:
-            _LOG.error(f"Validation error: {str(e)}")
-            return {
-                'statusCode': 400,
-                'error': {
-                    'message': str(e),
-                    'details': traceback.format_exc()
-                }
-            }
 
         except Exception as e:
             _LOG.error(f"Internal server error: {str(e)}")
